@@ -1,6 +1,5 @@
 package validation;
 
-import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
 import io.vavr.control.Validation;
@@ -8,8 +7,6 @@ import model.Address;
 import model.Email;
 import model.Person;
 import model.ZipCode;
-
-import java.util.function.Function;
 
 public class ApiValidation {
 
@@ -20,16 +17,14 @@ public class ApiValidation {
         return Validation.valid(value);
     }
 
-    public static Validation<Error, ZipCode> validateZipValue(String path, String zipCode) {
+    public static Validation<Error, ZipCode> validateZipcode(String path, String zipCode) {
+        if (zipCode == null) {
+            return Validation.invalid(new ValueError(path, null, "Should not be null"));
+        }
         if (!zipCode.matches("[0-9]{0,5}")) {
             return Validation.invalid(new ValueError(path, zipCode, "Not a valid zip code"));
         }
         return Validation.valid(new ZipCode(zipCode));
-    }
-
-    public static Validation<Error, ZipCode> validateZipcode(String path, String zipCode) {
-        return isNotNull(path, zipCode)
-                .flatMap(value -> validateZipValue(path, zipCode));
     }
 
     public static Validation<Error, Email> validateEmail(String path, String value) {
